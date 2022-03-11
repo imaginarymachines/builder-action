@@ -1,5 +1,5 @@
 {
-  "name": "javascript-action",
+  "name": "@imaginary-machines/builder-action",
   "version": "1.0.0",
   "description": "JavaScript Action Template",
   "main": "index.js",
@@ -25,7 +25,10 @@
   },
   "homepage": "https://github.com/actions/javascript-action#readme",
   "dependencies": {
-    "@actions/core": "^1.2.5"
+    "@actions/artifact": "^1.0.0",
+    "@actions/core": "^1.2.5",
+    "@actions/exec": "^1.1.0",
+    "plugin-machine": "^0.7.0"
   },
   "devDependencies": {
     "@vercel/ncc": "^0.31.1",
