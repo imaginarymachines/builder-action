@@ -1,4 +1,4 @@
-name: "units-test"
+name: "Test Action Runs"
 on:
   pull_request:
   push:

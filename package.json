@@ -28,6 +28,7 @@
     "@actions/artifact": "^1.0.0",
     "@actions/core": "^1.2.5",
     "@actions/exec": "^1.1.0",
+    "@actions/github": "^5.0.0",
     "plugin-machine": "^0.8.0"
   },
   "devDependencies": {
