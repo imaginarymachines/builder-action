@@ -1,10 +1,9 @@
-name: 'Wait'
-description: 'Wait a designated number of milliseconds'
+name: 'Plugin Machine Plugin Builder'
+description: 'Build installable ZIP files for your WordPress Plugin'
 inputs:
-  milliseconds:  # id of input
-    description: 'number of milliseconds to wait'
+  token:  # id of input
+    description: 'Plugin Machine API Token'
     required: true
-    default: '1000'
 outputs:
   time: # output will be available to future steps
     description: 'The current time after waiting'
