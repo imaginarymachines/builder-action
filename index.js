@@ -1,7 +1,7 @@
 const core = require("@actions/core");
 const exec = require("@actions/exec");
 const github = require("@actions/github");
-
+const io = require("@actions/io");
 const pluginMachine = require("plugin-machine").default;
 
 // most @actions toolkit packages have async methods
@@ -22,6 +22,8 @@ async function run() {
 	const { buildPlugin, copyBuildFiles, zipDirectory } = builder;
 
 	let outputDir = "output";
+	await io.mkdirP(`${outputDir}`);
+	await io.mkdirP(`${pluginDir}/${outputDir}`);
 	try {
 		await buildPlugin(pluginMachineJson, "prod", pmDockerApi).then(() =>
 			console.log("built!")
