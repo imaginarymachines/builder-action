@@ -1,0 +1,21 @@
+{
+    "slug": "test-plugin",
+    "pluginId": 192,
+    "buildId": 211,
+    "entryPoints": {
+        "adminPages": [],
+        "blocks": []
+    },
+    "buildIncludes": [
+        "test-plugin.php",
+        "readme.txt",
+        "php",
+        "vendor",
+        "build",
+        "inc"
+    ],
+    "buildSteps": {
+        "dev": [],
+        "prod": []
+    }
+}

@@ -28,7 +28,7 @@
     "@actions/artifact": "^1.0.0",
     "@actions/core": "^1.2.5",
     "@actions/exec": "^1.1.0",
-    "plugin-machine": "^0.7.0"
+    "plugin-machine": "^0.8.0"
   },
   "devDependencies": {
     "@vercel/ncc": "^0.31.1",

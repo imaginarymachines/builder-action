@@ -1,21 +1,42 @@
-const core = require('@actions/core');
-const wait = require('./wait');
-
+const core = require("@actions/core");
+const pluginMachine = require("plugin-machine").default;
 
 // most @actions toolkit packages have async methods
 async function run() {
-  try {
-    const ms = core.getInput('milliseconds');
-    core.info(`Waiting ${ms} milliseconds ...`);
+	const { createDockerApi, builder } = pluginMachine;
+	const pmDockerApi = await createDockerApi({});
+	const pluginDir = __dirname;
+	const pluginMachineJson = pluginMachine.getPluginMachineJson(
+		pluginDir,
+		//Optional ovverides
+		{}
+	);
 
-    core.debug((new Date()).toTimeString()); // debug is only output if you set the secret `ACTIONS_RUNNER_DEBUG` to true
-    await wait(parseInt(ms));
-    core.info((new Date()).toTimeString());
+	const { buildPlugin, copyBuildFiles, zipDirectory } = builder;
 
-    core.setOutput('time', new Date().toTimeString());
-  } catch (error) {
-    core.setFailed(error.message);
-  }
+	let outputDir = "output";
+	try {
+		await buildPlugin(pluginMachineJson, "prod", pmDockerApi).then(() =>
+			console.log("built!")
+		);
+
+		await copyBuildFiles(
+			pluginMachineJson,
+			`/${outputDir}`, //subdir of plugin dir to copy file to,
+			pluginDir //plugin root directory
+		).then(() => console.log("copied!"));
+
+		await zipDirectory(
+			`${pluginDir}/${outputDir}`,
+			pluginMachineJson.slug
+		).then(() => console.log("zipped!"));
+
+		core.info(new Date().toTimeString());
+
+		core.setOutput("time", new Date().toTimeString());
+	} catch (error) {
+		core.setFailed(error.message);
+	}
 }
 
 run();
