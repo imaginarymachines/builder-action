@@ -2,12 +2,9 @@ const core = require("@actions/core");
 const exec = require("@actions/exec");
 const github = require("@actions/github");
 const io = require("@actions/io");
-const pluginMachine = require("plugin-machine").default;
 
 // most @actions toolkit packages have async methods
 async function run() {
-	const { createDockerApi, builder } = pluginMachine;
-	const pmDockerApi = await createDockerApi({});
 	const pluginDir = exec.exec("pwd");
 	core.debug(`pluginDir ${pluginDir}`);
 	const payload = JSON.stringify(github.context.payload, undefined, 2);
