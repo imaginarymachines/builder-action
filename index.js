@@ -9,9 +9,11 @@ async function run() {
 	const { createDockerApi, builder } = pluginMachine;
 	const pmDockerApi = await createDockerApi({});
 	const pluginDir = exec.exec("pwd");
-	core.debug(pluginDir);
+	core.debug(`pluginDir ${pluginDir}`);
 	const payload = JSON.stringify(github.context.payload, undefined, 2);
 	core.debug(`The event payload: ${payload}`);
+
+	return;
 
 	const pluginMachineJson = pluginMachine.getPluginMachineJson(
 		pluginDir,
@@ -28,7 +30,7 @@ async function run() {
 		await buildPlugin(pluginMachineJson, "prod", pmDockerApi).then(() =>
 			console.log("built!")
 		);
-
+		console.log(pluginMachineJson);
 		await copyBuildFiles(
 			pluginMachineJson,
 			`/${outputDir}`, //subdir of plugin dir to copy file to,
