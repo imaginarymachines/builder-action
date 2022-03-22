@@ -1,0 +1,32 @@
+{
+    "slug": "builder-action-test-plugin",
+    "pluginId": 202,
+    "buildId": 224,
+    "entryPoints": {
+        "adminPages": [
+            "one"
+        ],
+        "blocks": []
+    },
+    "buildIncludes": [
+        "builder-action-test-plugin.php",
+        "readme.txt",
+        "php",
+        "vendor",
+        "build",
+        "inc",
+        "admin/one/init.php"
+    ],
+    "buildSteps": {
+        "dev": [
+            "composer install",
+            "yarn",
+            "yarn start"
+        ],
+        "prod": [
+            "composer install --no-dev",
+            "yarn",
+            "yarn build"
+        ]
+    }
+}

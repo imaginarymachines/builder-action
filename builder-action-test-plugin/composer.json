@@ -1,0 +1,27 @@
+{
+    "name": "imaginary-machines/builder-action-test-plugin",
+    "description": "Test of PHP and JS build + zip",
+    "require": {
+        "php": "^7.2|^8.0"
+    },
+    "type": "wordpress-plugin",
+    "autoload": {
+        "psr-4": {
+            "ImaginaryMachines\\BuilderTest\\": "./php"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "ImaginaryMachines\\BuilderTest\\Tests\\": "./tests"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^7.0",
+        "yoast/phpunit-polyfills": "^1.0.1",
+        "mockery/mockery": "1.2",
+        "brain/monkey": "2.*"
+    },
+    "scripts": {
+        "test": "phpunit --config=phpunit-unit.xml"
+    }
+}
