@@ -71,6 +71,7 @@ You can now consume the action by referencing the v1 branch
 uses: imaginary-machines/builder-action@v1
 with:
   token: ${{ secrets.PLUGIN_MACHINE_TOKEN }}
+  path: ${{ github.workspace }}
 ```
 
 See the [actions tab](https://github.com/imaginarymachines/builder-action/actions) for runs of this action! :rocket:
