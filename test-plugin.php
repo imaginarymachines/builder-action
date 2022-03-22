@@ -1,4 +1,0 @@
-<?php
-/**
- Name: Test Plugin
- */
