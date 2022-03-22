@@ -8,8 +8,10 @@ inputs:
     description: Root directory of plugin. Probably ${{ github.workspace }}
     required: true
 outputs:
-  time: # output will be available to future steps
-    description: 'The current time after waiting'
+  zipFile: # output will be available to future steps
+    description: 'Local path to zip file'
+  zipDownload:
+    description: 'Path to download uploaded zip'
 runs:
   using: 'node16'
   main: 'dist/index.js'
