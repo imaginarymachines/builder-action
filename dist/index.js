@@ -36069,6 +36069,16 @@ let pluginMachineJson;
 const highlight = (string)=>string
 ;
 const getPluginMachineJson = (pluginDir, opts = {})=>{
+    const addAppUrl = (config)=>{
+        if (!config.hasOwnProperty('appUrl') || false == config.appUrl) {
+            config.appUrl = 'https://pluginmachine.app';
+        }
+        return config;
+    };
+    if (opts.pluginMachineJson) {
+        pluginMachineJson = addAppUrl(opts.pluginMachineJson);
+        return pluginMachineJson;
+    }
     if (!pluginMachineJson) {
         if (fs.existsSync(`${pluginDir}/pluginMachine.json`)) {
             pluginMachineJson = __nccwpck_require__(6035)(join(pluginDir, 'pluginMachine.json'));
@@ -36086,10 +36096,7 @@ const getPluginMachineJson = (pluginDir, opts = {})=>{
     pluginMachineJson.pluginId = parseInt(pluginMachineJson.pluginId, 10);
     //@ts-ignore
     pluginMachineJson.buildId = parseInt(pluginMachineJson.buildId, 10);
-    //@ts-ignore
-    if (!pluginMachineJson.hasOwnProperty('appUrl') || false == pluginMachineJson.appUrl) {
-        pluginMachineJson.appUrl = 'https://pluginmachine.app';
-    }
+    pluginMachineJson = addAppUrl(pluginMachineJson);
     return pluginMachineJson;
 };
 exports.getPluginMachineJson = getPluginMachineJson;
@@ -36503,6 +36510,37 @@ var _config = __nccwpck_require__(1050);
                 return r;
             });
         },
+        uploadFile: async (fileName, filePath)=>{
+            const formdata = new FormData();
+            formdata.append('file', fileName, filePath);
+            formdata.append('name', fileName);
+            formdata.append('private', false);
+            const url = (0, _config).appUrl(`/api/v1/files`);
+            return fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data',
+                    'Accept-Encoding': 'gzip, deflate',
+                    'Accept': '*/*'
+                },
+                body: formdata,
+                redirect: 'follow'
+            })//@ts-ignore
+            .catch((error)=>{
+                console.log({
+                    error
+                });
+            })//@ts-ignore
+            .then((r)=>r.json()
+            )//@ts-ignore
+            .then((r)=>{
+                console.log({
+                    r
+                });
+                return r;
+            });
+        },
         //upoad a new version
         uploadVersion: async (pluginMachineJson, version, pluginDir)=>{
             const { pluginId , slug  } = pluginMachineJson;
@@ -36706,9 +36744,11 @@ async function makeZip(pluginDir, pluginMachineJson) {
     console.log('Zipping!');
     return new Promise(async (resolve, reject)=>{
         output.on('close', function() {
-            console.log('Zipped!');
+            console.log(`ZIPPED: ${slug}.zip`);
             console.log(archive.pointer() + ' total bytes');
-            resolve(true);
+            resolve({
+                name: `${slug}.zip`
+            });
         });
         //@ts-ignore
         archive.on('error', function(err) {
@@ -46802,48 +46842,78 @@ var __webpack_exports__ = {};
 const core = __nccwpck_require__(2186);
 const exec = __nccwpck_require__(1514);
 const github = __nccwpck_require__(5438);
+const io = __nccwpck_require__(7436);
 
-const pluginMachine = __nccwpck_require__(750)/* .default */ .Z;
+const pluginMachineCli = __nccwpck_require__(750)/* .default */ .Z;
 
+const createApi = async (token) => {
+	try {
+		const api = await pluginMachineCli.pluginMachineApi(token);
+		return api;
+	} catch (error) {
+		console.log({ error });
+		core.setFailed("Could not create api");
+	}
+};
+
+const uploadFile = async (fileName, filePath, pluginMachineApi) => {
+	try {
+		const upload = pluginMachineApi.uploadFile(fileName, filePath);
+		return upload;
+	} catch (error) {
+		console.log({ error, fileName, filePath });
+		core.setFailed("Failed to upload file");
+	}
+};
 // most @actions toolkit packages have async methods
 async function run() {
-	const { createDockerApi, builder } = pluginMachine;
-	const pmDockerApi = await createDockerApi({});
-	const pluginDir = exec.exec("pwd");
-	core.debug(pluginDir);
-	const payload = JSON.stringify(github.context.payload, undefined, 2);
-	core.debug(`The event payload: ${payload}`);
+	const token = core.getInput("token");
+	const pluginMachineApi = await createApi(token);
+	const pluginDir = core.getInput("path");
+	const { buildPlugin, makeZip } = pluginMachineCli.builder;
 
-	const pluginMachineJson = pluginMachine.getPluginMachineJson(
+	const pluginMachineJson = pluginMachineCli.getPluginMachineJson(
 		pluginDir,
 		//Optional ovverides
 		{}
 	);
+	console.log({ pluginMachineJson });
 
-	const { buildPlugin, copyBuildFiles, zipDirectory } = builder;
-
-	let outputDir = "output";
 	try {
-		await buildPlugin(pluginMachineJson, "prod", pmDockerApi).then(() =>
-			console.log("built!")
-		);
+		const pmDockerApi = await pluginMachineCli.createDockerApi(); //no opts for now.
 
-		await copyBuildFiles(
-			pluginMachineJson,
-			`/${outputDir}`, //subdir of plugin dir to copy file to,
-			pluginDir //plugin root directory
-		).then(() => console.log("copied!"));
-
-		await zipDirectory(
-			`${pluginDir}/${outputDir}`,
-			pluginMachineJson.slug
-		).then(() => console.log("zipped!"));
-
-		core.info(new Date().toTimeString());
-
-		core.setOutput("time", new Date().toTimeString());
+		const fileName = await buildPlugin(pluginMachineJson, "prod", pmDockerApi)
+			.catch((error) => {
+				console.log({ error });
+				core.setFailed("Failed to build plugin");
+			})
+			.then(() => {
+				makeZip(pluginDir, pluginMachineJson)
+					.catch((error) => {
+						console.log({ error });
+						core.setFailed("Failed to zip plugin");
+					})
+					.then(({ name }) => {
+						core.setOutput("zipFile", name);
+						return name;
+					});
+			});
+		const zipDownload = await uploadFile(fileName, `${pluginDir}/${fileName}`)
+			.catch((error) => {
+				console.log(error);
+				core.setFailed("Failed to upload file");
+			})
+			.then((r) => {
+				if (r.download) {
+					return r.download;
+				}
+				core.setFailed("Could not get download link from upload");
+			});
+		core.setOutput(zipDownload, zipDownload);
+		return 0;
 	} catch (error) {
-		core.setFailed(error.message);
+		console.log(error);
+		core.setFailed("Could not make docker api");
 	}
 }
 
