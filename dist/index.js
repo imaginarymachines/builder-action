@@ -46898,7 +46898,11 @@ async function run() {
 						return name;
 					});
 			});
-		const zipDownload = await uploadFile(fileName, `${pluginDir}/${fileName}`)
+		const zipDownload = await uploadFile(
+			fileName,
+			`${pluginDir}/${fileName}`,
+			pluginMachineApi
+		)
 			.catch((error) => {
 				console.log(error);
 				core.setFailed("Failed to upload file");
