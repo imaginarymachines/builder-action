@@ -5,7 +5,7 @@ inputs:
     description: 'Plugin Machine API Token'
     required: true
   path:  # id of input
-    description: Root directory of plugin. Probably ${{ github.workspace }}
+    description: Root directory of plugin.
     required: true
 outputs:
   zipFile: # output will be available to future steps
