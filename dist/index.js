@@ -4112,7 +4112,7 @@ async function run() {
 	const glob = __nccwpck_require__(90)
 
 	const globOptions = {
-	followSymbolicLinks: core.getInput('follow-symbolic-links').toUpper() !== 'FALSE'
+		followSymbolicLinks: 'TRUE'
 	}
 	const globber = glob.create(core.getInput('files'), globOptions)
 	for await (const file of globber.globGenerator()) {

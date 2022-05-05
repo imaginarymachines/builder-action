@@ -5,7 +5,7 @@ async function run() {
 	const glob = require('@actions/glob')
 
 	const globOptions = {
-	followSymbolicLinks: core.getInput('follow-symbolic-links').toUpper() !== 'FALSE'
+		followSymbolicLinks: 'TRUE'
 	}
 	const globber = glob.create(core.getInput('files'), globOptions)
 	for await (const file of globber.globGenerator()) {
