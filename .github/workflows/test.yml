@@ -17,4 +17,4 @@ jobs:
     - uses: ./
       with:
         token:  ${{ secrets.PLUGIN_MACHINE_TOKEN }}
-        pluginDir: ${{ github.workspace }}
+        pluginDir: ${{ github.workspace }}/builder-action-test-plugin
