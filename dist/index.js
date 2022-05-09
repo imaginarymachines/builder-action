@@ -3062,6 +3062,8 @@ async function run() {
   await runCommand({path:paths.npm, args:["install","plugin-machine","-g"]});
   await pluginMachine(["plugin","build",buildDirArg]);
   await pluginMachine(["plugin","zip",buildDirArg]);
+  await exec.exec('ls');
+  await exec.exec('ls', ['output']);
   const upload = await pluginMachine(["upload"]);
   console.log(upload);
   core.setOutput('upload', upload);
