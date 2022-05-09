@@ -7,6 +7,9 @@ inputs:
 outputs:
   upload:
     description: Upload details
+  pluginDir:
+    description: Directory with plugin
+    required: false
 
 runs:
   using: 'node16'
