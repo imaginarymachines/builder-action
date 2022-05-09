@@ -34,8 +34,8 @@ async function run() {
   const token = core.getInput('token');
   const pluginMachine = async (args) => {
 	return await runCommand({
-		path:paths.npx,
-		args,
+		path:paths.npm,
+		args:["plugin-machine", ...args],
 	});
   }
   await runCommand({path:paths.npm, args:["install","plugin-machine","-g"]});
