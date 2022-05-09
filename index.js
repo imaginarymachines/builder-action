@@ -1,7 +1,7 @@
 const core = require('@actions/core');
 import {which} from "@actions/io"
 const exec = require('@actions/exec');
-
+const pluginMachine = require( 'plugin-machine')
 
 const runCommand = async ({path, args = [],options = {}}) => {
 	let output = '';
@@ -53,7 +53,8 @@ async function run() {
   await exec.exec('ls', [`${pluginDir}/${buildDir}`]);
   const upload = await pluginMachine([
 	  	"upload",
-		`--fileName=${pluginDir}/builder-action-test-plugin.zip`
+		pluginDirArg,
+		`--fileName=/builder-action-test-plugin.zip`
 	]);
   console.log(upload);
   core.setOutput('upload', upload);
