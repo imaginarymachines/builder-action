@@ -4,6 +4,9 @@ inputs:
   token:
     description: 'Plugin Machine Token'
     required: true
+outputs:
+  upload:
+    description: Upload details
 
 runs:
   using: 'node16'

@@ -32,9 +32,20 @@ async function run() {
   };
 
   const token = core.getInput('token');
-  await runCommand({path:paths.npm, args:["install"]});
+  const pluginMachine = async (args) => {
+	return await runCommand({
+		path:paths.npx,
+		args,
+	});
+  }
+  await runCommand({path:paths.npm, args:["install","plugin-machine","-g"]});
 
-  await runCommand({path:paths.npx, args:["install plugin-machine -g"]});
+  await pluginMachine(["login",`--token=${token}`, '-ci']);
+  await pluginMachine(["plugin","build"]);
+  await pluginMachine(["plugin","zip"]);
+  const upload = await pluginMachine(["upload"]);
+  console.log(upload);
+  core.setOutput('upload', upload);
 }
 
 run();
