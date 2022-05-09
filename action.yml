@@ -4,12 +4,15 @@ inputs:
   token:
     description: 'Plugin Machine Token'
     required: true
-outputs:
-  upload:
-    description: Upload details
   pluginDir:
     description: Directory with plugin
     required: false
+
+
+outputs:
+  upload:
+    description: Upload details
+
 
 runs:
   using: 'node16'
