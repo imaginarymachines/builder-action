@@ -17,7 +17,7 @@ const runCommand = async ({path, args = [],options = {}}) => {
 	};
 	return new Promise(async(resolve, reject) => {
 		await exec.exec(path, args, options);
-		if(error){
+		if(error && ! error.startsWith('npm WARN')){
 			reject(error);
 		}
 		resolve(output);
