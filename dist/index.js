@@ -3051,6 +3051,7 @@ async function run() {
   }
   const pluginDirArg = `--pluginDir=${pluginDir}`;
   const tokenArg = `--token=${token}`;
+  const buildDirArg = `--buildDir=output`;
   const pluginMachine = async (args) => {
 	return await runCommand({
 		path:paths.npx,
@@ -3059,8 +3060,8 @@ async function run() {
   }
 
   await runCommand({path:paths.npm, args:["install","plugin-machine","-g"]});
-  await pluginMachine(["plugin","build"]);
-  await pluginMachine(["plugin","zip"]);
+  await pluginMachine(["plugin","build",buildDirArg]);
+  await pluginMachine(["plugin","zip",buildDirArg]);
   const upload = await pluginMachine(["upload"]);
   console.log(upload);
   core.setOutput('upload', upload);
