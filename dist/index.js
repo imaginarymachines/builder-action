@@ -3059,6 +3059,7 @@ async function run() {
   const upload = await pluginMachine(["upload"]);
   console.log(upload);
   core.setOutput('upload', upload);
+
 }
 
 run();
