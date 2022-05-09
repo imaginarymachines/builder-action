@@ -3049,9 +3049,10 @@ async function run() {
   if( ! pluginDir ){
 	pluginDir = process.env.GITHUB_WORKSPACE;
   }
+  const buildDir = 'output';
   const pluginDirArg = `--pluginDir=${pluginDir}`;
   const tokenArg = `--token=${token}`;
-  const buildDirArg = `--buildDir=output`;
+  const buildDirArg = `--buildDir=${buildDir}`;
   const pluginMachine = async (args) => {
 	return await runCommand({
 		path:paths.npx,
@@ -3062,9 +3063,11 @@ async function run() {
   await runCommand({path:paths.npm, args:["install","plugin-machine","-g"]});
   await pluginMachine(["plugin","build",buildDirArg]);
   await pluginMachine(["plugin","zip",buildDirArg]);
-  await exec.exec('ls');
-  await exec.exec('ls', ['output']);
-  const upload = await pluginMachine(["upload"]);
+  await exec.exec('ls', [`${pluginDir}/${buildDir}`]);
+  const upload = await pluginMachine([
+	  	"upload",
+		`--fileName=${pluginDir}/${buildDir}/builder-action-test-plugin.zip`
+	]);
   console.log(upload);
   core.setOutput('upload', upload);
 
