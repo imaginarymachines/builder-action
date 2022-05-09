@@ -39,6 +39,7 @@ async function run() {
 	});
   }
   const {GITHUB_WORKSPACE } = process.env;
+  console.log(GITHUB_WORKSPACE);
   await runCommand({path:paths.npm, args:["install","plugin-machine","-g"]});
   const pluginDirArg = `--pluginDir=${GITHUB_WORKSPACE}`;
   await pluginMachine(["login",`--token=${token}`, '--ci']);
