@@ -3053,7 +3053,7 @@ async function run() {
   }
   await runCommand({path:paths.npm, args:["install","plugin-machine","-g"]});
 
-  await pluginMachine(["login",`--token=${token}`, '-ci']);
+  await pluginMachine(["login",`--token=${token}`, '--ci']);
   await pluginMachine(["plugin","build"]);
   await pluginMachine(["plugin","zip"]);
   const upload = await pluginMachine(["upload"]);
