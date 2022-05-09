@@ -53,7 +53,7 @@ async function run() {
   await exec.exec('ls', [`${pluginDir}/${buildDir}`]);
   const upload = await pluginMachine([
 	  	"upload",
-		`--fileName=${pluginDir}/${buildDir}/builder-action-test-plugin.zip`
+		`--fileName=${pluginDir}/builder-action-test-plugin.zip`
 	]);
   console.log(upload);
   core.setOutput('upload', upload);
