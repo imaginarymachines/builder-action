@@ -36,6 +36,7 @@ async function run() {
   if( ! pluginDir ){
 	pluginDir = process.env.GITHUB_WORKSPACE;
   }
+  const pluginDirArg = `--pluginDir=${pluginDir}`;
 
   const pluginMachine = async (args) => {
 	return await runCommand({
@@ -45,7 +46,6 @@ async function run() {
   }
 
   await runCommand({path:paths.npm, args:["install","plugin-machine","-g"]});
-  const pluginDirArg = `--pluginDir=${GITHUB_WORKSPACE}`;
   await pluginMachine(["login",`--token=${token}`, '--ci']);
   await pluginMachine(["plugin","build",pluginDirArg]);
   await pluginMachine(["plugin","zip",pluginDirArg]);
