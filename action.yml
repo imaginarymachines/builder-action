@@ -1,12 +1,10 @@
 name: 'Plugin Machine Plugin Builder'
 description: 'Build installable ZIP files for your WordPress Plugin'
 inputs:
-  files:
-    description: 'Files to print'
+  token:
+    description: 'Plugin Machine Token'
     required: true
-  follow-symbolic-links:
-    description: 'Indicates whether to follow symbolic links'
-    default: true
+
 runs:
   using: 'node16'
   main: 'dist/index.js'
