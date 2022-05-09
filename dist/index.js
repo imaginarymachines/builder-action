@@ -3051,11 +3051,12 @@ async function run() {
 		args:["plugin-machine", ...args],
 	});
   }
+  const {GITHUB_WORKSPACE } = process.env;
   await runCommand({path:paths.npm, args:["install","plugin-machine","-g"]});
-
+  const pluginDirArg = `--pluginDir=${GITHUB_WORKSPACE}`;
   await pluginMachine(["login",`--token=${token}`, '--ci']);
-  await pluginMachine(["plugin","build"]);
-  await pluginMachine(["plugin","zip"]);
+  await pluginMachine(["plugin","build",pluginDirArg]);
+  await pluginMachine(["plugin","zip",pluginDirArg]);
   const upload = await pluginMachine(["upload"]);
   console.log(upload);
   core.setOutput('upload', upload);
