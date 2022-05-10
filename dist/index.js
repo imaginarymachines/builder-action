@@ -3083,6 +3083,7 @@ async function run() {
 	return url;
   }
   const upload = await uploader();
+  upload.forEach( line => console.log(line));
   core.setOutput('upload', upload);
 
 }
