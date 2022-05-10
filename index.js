@@ -1,63 +1,48 @@
 const core = require('@actions/core');
-import {which} from "@actions/io"
-const exec = require('@actions/exec');
-const pluginMachine = require( 'plugin-machine')
+const {pluginMachine} = require( 'plugin-machine').default;
 
-const runCommand = async ({path, args = [],options = {}}) => {
-	let output = '';
-	let error = '';
+async function main({token,pluginDir}){
 
-	options.listeners = {
-	  stdout: (data) => {
-		output += data.toString();
-	  },
-	  stderr: (data) => {
-		error += data.toString();
-	  }
-	};
-	return new Promise(async(resolve, reject) => {
-		await exec.exec(path, args, options);
-		if(error && ! error.startsWith('npm WARN')){
-			//reject(error);
+	return new Promise( async  (resolve, reject) => {
+		try {
+			const upload = await pluginMachine.builder({
+				pluginDir,
+				token
+			});
+			if( upload && upload.url ){
+				resolve(upload);
+			}
+			reject({
+				message:upload.message ? upload.message : 'Error'}
+			);
+		} catch (error) {
+			reject({
+				message:error.message ? error.message : 'Error'}
+			);
 		}
-		resolve(output);
-	});
+	})
 
 }
 async function run() {
-  const paths = {
-    npm: await which("npm", true),
-    npx: await which("npx", true),
-    yarn: await which("yarn", true),
-  };
+	const token = core.getInput('token');
+	let pluginDir = core.getInput('pluginDir');
+	if( ! pluginDir ){
+		pluginDir = process.env.GITHUB_WORKSPACE;
+	}
+	try {
+		const upload = await main({
+			pluginDir,
+			token
+		});
+		if( upload && upload.url ){
+			core.setOutput('upload', upload.url);
+		}
+		core.setError(upload.message ? upload.message : 'Error');
+	} catch (error) {
+		core.setFailed(error.message);
+	}
 
-  const token = core.getInput('token');
-  let pluginDir = core.getInput('pluginDir');
-  if( ! pluginDir ){
-	pluginDir = process.env.GITHUB_WORKSPACE;
-  }
-  const buildDir = 'output';
-  const pluginDirArg = `--pluginDir=${pluginDir}`;
-  const tokenArg = `--token=${token}`;
-  const buildDirArg = `--buildDir=${buildDir}`;
-  const pluginMachine = async (args) => {
-	return await runCommand({
-		path:paths.npx,
-		args:["plugin-machine", ...args, pluginDirArg, tokenArg],
-	});
-  }
 
-  await runCommand({path:paths.npm, args:["install","plugin-machine","-g"]});
-  await pluginMachine(["plugin","build",buildDirArg]);
-  await pluginMachine(["plugin","zip",buildDirArg]);
-  await exec.exec('ls', [`${pluginDir}/${buildDir}`]);
-  const upload = await pluginMachine([
-	  	"upload",
-		pluginDirArg,
-		`--fileName=/builder-action-test-plugin.zip`
-	]);
-  console.log(upload);
-  core.setOutput('upload', upload);
 
 }
 
