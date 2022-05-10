@@ -49,14 +49,10 @@ async function run() {
   await pluginMachine(["plugin","build",buildDirArg]);
   await pluginMachine(["plugin","zip",buildDirArg]);
   const uploader = async () => {
-	let url = '';
+	let url = [];
 	const listeners = {
 		stdout: (data) => {
-			data = data.toString();
-			console.log({data});
-			if(data.startsWith('Upload completed ')){
-				url = data.replace('Upload completed ', '');
-			}
+			url.push(data.toString());
 		},
 		stderr: (data) => {
 
@@ -71,7 +67,7 @@ async function run() {
 	});
 	return url;
   }
- const upload = await uploader();
+  const upload = await uploader();
   core.setOutput('upload', upload);
 
 }
