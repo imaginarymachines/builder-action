@@ -3055,18 +3055,36 @@ async function run() {
   const pluginMachine = async (args) => {
 	return await runCommand({
 		path:paths.npx,
-		args:["plugin-machine", ...args, pluginDirArg, tokenArg],
+		args:["plugin-machine", ...args, pluginDirArg, tokenArg]
 	});
   }
   await runCommand({path:paths.npm, args:["install","plugin-machine","-g"]});
   await pluginMachine(["plugin","build",buildDirArg]);
   await pluginMachine(["plugin","zip",buildDirArg]);
   await exec.exec('ls', [`${pluginDir}/${buildDir}`]);
-  const upload = await pluginMachine([
-	  	"upload",
-		pluginDirArg,
-	]);
-  console.log(upload);
+  const uploader = async () => {
+	let url = '';
+	const listeners = {
+		stdout: (data) => {
+			data = data.toString();
+			if(data.startsWith('Upload completed ')){
+				url = data.replace('Upload completed ', '');
+			}
+		},
+		stderr: (data) => {
+
+		}
+	};
+	await runCommand({
+		path:paths.npx,
+		args:["plugin-machine", "upload", pluginDirArg, tokenArg],
+		options: {
+			listeners
+		}
+	});
+	return url;
+  }
+ const upload = await uploader();
   core.setOutput('upload', upload);
 
 }
