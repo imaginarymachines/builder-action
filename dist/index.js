@@ -2822,14 +2822,6 @@ exports.debug = debug; // for test
 
 /***/ }),
 
-/***/ 595:
-/***/ ((module) => {
-
-module.exports = eval("require")("plugin-machine");
-
-
-/***/ }),
-
 /***/ 491:
 /***/ ((module) => {
 
@@ -3022,7 +3014,6 @@ __nccwpck_require__.r(__webpack_exports__);
 const core = __nccwpck_require__(186);
 
 const exec = __nccwpck_require__(514);
-const pluginMachine = __nccwpck_require__( 595)
 
 const runCommand = async ({path, args = [],options = {}}) => {
 	let output = '';
@@ -3067,7 +3058,6 @@ async function run() {
 		args:["plugin-machine", ...args, pluginDirArg, tokenArg],
 	});
   }
-
   await runCommand({path:paths.npm, args:["install","plugin-machine","-g"]});
   await pluginMachine(["plugin","build",buildDirArg]);
   await pluginMachine(["plugin","zip",buildDirArg]);
@@ -3075,7 +3065,6 @@ async function run() {
   const upload = await pluginMachine([
 	  	"upload",
 		pluginDirArg,
-		`--fileName=/builder-action-test-plugin.zip`
 	]);
   console.log(upload);
   core.setOutput('upload', upload);

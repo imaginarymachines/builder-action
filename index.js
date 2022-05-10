@@ -1,7 +1,6 @@
 const core = require('@actions/core');
 import {which} from "@actions/io"
 const exec = require('@actions/exec');
-const pluginMachine = require( 'plugin-machine')
 
 const runCommand = async ({path, args = [],options = {}}) => {
 	let output = '';
