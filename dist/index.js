@@ -3061,12 +3061,12 @@ async function run() {
   await runCommand({path:paths.npm, args:["install","plugin-machine","-g"]});
   await pluginMachine(["plugin","build",buildDirArg]);
   await pluginMachine(["plugin","zip",buildDirArg]);
-  await exec.exec('ls', [`${pluginDir}/${buildDir}`]);
   const uploader = async () => {
 	let url = '';
 	const listeners = {
 		stdout: (data) => {
 			data = data.toString();
+			console.log({data});
 			if(data.startsWith('Upload completed ')){
 				url = data.replace('Upload completed ', '');
 			}
