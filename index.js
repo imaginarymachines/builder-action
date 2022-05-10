@@ -51,10 +51,17 @@ async function run() {
   await pluginMachine(["plugin","build",buildDirArg]);
   await pluginMachine(["plugin","zip",buildDirArg]);
   const uploader = async () => {
-	let url = [];
+	let url = ''
 	const listeners = {
 		stdout: (data) => {
-			url.push(data.toString());
+			data = data.toString();
+			if( data.startsWith('Upload completed')){
+				url = data.replace('Upload completed', '').trim();
+			}
+			if( data.startsWith('\u001b[32mUpload completed')){
+				url = data.replace('\u001b[32mUpload completed','').trim();
+			}
+
 		},
 		stderr: (data) => {
 
