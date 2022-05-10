@@ -6,14 +6,16 @@ const runCommand = async ({path, args = [],options = {}}) => {
 	let output = '';
 	let error = '';
 
-	options.listeners = {
-	  stdout: (data) => {
-		output += data.toString();
-	  },
-	  stderr: (data) => {
-		error += data.toString();
-	  }
-	};
+	if( ! options.listeners ){
+		options.listeners = {
+			stdout: (data) => {
+				output += data.toString();
+			},
+			stderr: (data) => {
+				error += data.toString();
+			}
+		};
+	}
 	return new Promise(async(resolve, reject) => {
 		await exec.exec(path, args, options);
 		if(error && ! error.startsWith('npm WARN')){
