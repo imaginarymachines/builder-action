@@ -3064,6 +3064,7 @@ async function run() {
 	await pluginMachine(["plugin","build",buildDirArg]);
 	await pluginMachine(["plugin","zip",buildDirArg]);
 	const uploader = async () => {
+		//@todo get CLI to only return the URL.
 		let url = ''
 		const listeners = {
 			stdout: (data) => {
@@ -3087,6 +3088,10 @@ async function run() {
 				listeners
 			}
 		});
+		if( url ){
+			//Cut off after name of file.
+			url.substring(0, url.indexOf('zip') + 3);
+		}
 		return url;
 	}
   	const upload = await uploader();
