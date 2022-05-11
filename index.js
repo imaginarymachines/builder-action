@@ -90,10 +90,10 @@ async function run() {
 
 	//Put a comment on PR request if enabled
 	if( core.getInput('commentPr',false)){
-		const GITHUB_TOKEN = core.getInput('GITHUB_TOKEN');
+		const token = core.getInput('GITHUB_TOKEN');
 		const context = github.context;
 		const {payload} = context;
-		if ( typeof GITHUB_TOKEN !== 'string' ) {
+		if ( typeof token !== 'string' ) {
 			throw new Error('Invalid GITHUB_TOKEN: did you forget to set it in your action config?');
 		}
 		//And is a PR
