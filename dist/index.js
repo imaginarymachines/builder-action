@@ -9890,16 +9890,17 @@ async function run() {
 		return url;
 	}
   	const upload = await uploader();
-	console.log({upload,number: github.event.number});
+	console.log({upload,github});
+	return
 	if( core.getInput('commentPr',false)){
 		const token = process.env.GITHUB_TOKEN;
 		if( github.event.number ){
 			const octokit = github.getOctokit(token);
 			await octokit.rest.issues.createComment({
-				issue_number: github.event.number,
+				issue_number:github.event.number,
 				owner: context.repo.owner,
 				repo: context.repo.repo,
-				body: `Link: ${upload}`
+				body: `Link To Built ZIP File: ${upload}`
 			  })
 		}
 
