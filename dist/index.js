@@ -9902,7 +9902,6 @@ async function run() {
 		}
 		//And is a PR
 		if( payload.hasOwnProperty('pull_request') ){
-			const token = process.env.GITHUB_TOKEN;
 			const octokit = github.getOctokit(token);
 			await octokit.rest.issues.createComment({
 				issue_number:github.event.number,
