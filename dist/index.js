@@ -3090,7 +3090,7 @@ async function run() {
 		});
 		if( url ){
 			//Cut off after name of file.
-			url.substring(0, url.indexOf('zip') + 3);
+			url = url.substring(0, url.indexOf('zip') + 3);
 		}
 		return url;
 	}
