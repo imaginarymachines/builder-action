@@ -87,6 +87,8 @@ async function run() {
 	//Make upload url available to other steps
   	const upload = await uploader();
 	core.setOutput('upload', upload);
+	const linkText = `Link To Built ZIP File: ${upload}`
+	core.notice(linkText);
 
 	//Put a comment on PR request if enabled
 	if( core.getInput('commentPr',false)){
@@ -99,23 +101,14 @@ async function run() {
 		//And is a PR
 		if( payload.hasOwnProperty('pull_request') ){
 			const octokit = github.getOctokit(token);
-			console.log(
-				{
-					issue_number:payload.pull_request.number,
-					owner: context.repo.owner,
-					repo: context.repo.repo,
-					body: `Link To Built ZIP File: ${upload}`
-				}
-			);
+
 			await octokit.rest.issues.createComment({
 				issue_number:payload.pull_request.number,
 				owner: context.repo.owner,
 				repo: context.repo.repo,
-				body: `Link To Built ZIP File: ${upload}`
+				body: linkText
 			})
 		}
-
-
 	}
 
 }
