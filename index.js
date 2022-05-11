@@ -1,6 +1,7 @@
 const core = require('@actions/core');
 import {which} from "@actions/io"
 const exec = require('@actions/exec');
+const github = require('@actions/github');
 
 const runCommand = async ({path, args = [],options = {}}) => {
 	let output = '';
@@ -25,6 +26,8 @@ const runCommand = async ({path, args = [],options = {}}) => {
 	});
 
 }
+
+
 async function run() {
 	const paths = {
 		npm: await which("npm", true),
@@ -82,7 +85,21 @@ async function run() {
 		return url;
 	}
   	const upload = await uploader();
-	console.log({upload});
+	console.log({upload,number: github.event.number});
+	if( core.getInput('commentPr',false)){
+		const token = process.env.GITHUB_TOKEN;
+		if( github.event.number ){
+			const octokit = github.getOctokit(token);
+			await octokit.rest.issues.createComment({
+				issue_number: github.event.number,
+				owner: context.repo.owner,
+				repo: context.repo.repo,
+				body: `Link To Built ZIP File: ${upload}`
+			  })
+		}
+
+
+	}
   	core.setOutput('upload', upload);
 
 }
