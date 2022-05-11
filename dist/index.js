@@ -9890,7 +9890,7 @@ async function run() {
 		return url;
 	}
   	const upload = await uploader();
-	console.log({upload,github});
+	console.log({upload,payload:github.context.payload});
 	return
 	if( core.getInput('commentPr',false)){
 		const token = process.env.GITHUB_TOKEN;
