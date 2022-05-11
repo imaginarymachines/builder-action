@@ -10,6 +10,9 @@ inputs:
   commentPr:
     description: If a link to ZIP should be added to PR
     required: false
+  GITHUB_TOKEN:
+    description: 'GitHub token'
+    required: true
 
 
 outputs:
