@@ -9896,7 +9896,8 @@ async function run() {
 	//Put a comment on PR request if enabled
 	if( core.getInput('commentPr',false)){
 		const GITHUB_TOKEN = core.getInput('GITHUB_TOKEN');
-		const {payload} = github.context;
+		const context = github.context;
+		const {payload} = context;
 		if ( typeof GITHUB_TOKEN !== 'string' ) {
 			throw new Error('Invalid GITHUB_TOKEN: did you forget to set it in your action config?');
 		}
@@ -9904,7 +9905,7 @@ async function run() {
 		if( payload.hasOwnProperty('pull_request') ){
 			const octokit = github.getOctokit(token);
 			await octokit.rest.issues.createComment({
-				issue_number:github.event.number,
+				issue_number:payload.pull_request.number,
 				owner: context.repo.owner,
 				repo: context.repo.repo,
 				body: `Link To Built ZIP File: ${upload}`
