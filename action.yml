@@ -1,18 +1,19 @@
 name: 'Plugin Machine Plugin Builder'
 description: 'Build installable ZIP files for your WordPress Plugin'
 inputs:
-  token:
+  PLUGIN_MACHINE_TOKEN:
     description: 'Plugin Machine Token'
     required: true
-  pluginDir:
-    description: Directory with plugin
-    required: false
-  commentPr:
-    description: If a link to ZIP should be added to PR
-    required: false
   GITHUB_TOKEN:
     description: 'GitHub token'
     required: true
+  PLUGIN_DIR:
+    description: Directory with plugin
+    required: false
+  COMMENT_PR:
+    description: If a link to ZIP should be added to PR
+    required: false
+
 
 
 outputs:

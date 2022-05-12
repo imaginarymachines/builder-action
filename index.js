@@ -1,5 +1,5 @@
 const core = require('@actions/core');
-import {which} from "@actions/io"
+const {which} =  require("@actions/io");
 const exec = require('@actions/exec');
 const github = require('@actions/github');
 
@@ -17,7 +17,7 @@ const runCommand = async ({path, args = [],options = {}}) => {
 			}
 		};
 	}
-	return new Promise(async(resolve, reject) => {
+	return new Promise(async(resolve,) => {
 		await exec.exec(path, args, options);
 		if(error && ! error.startsWith('npm WARN')){
 			//reject(error);
@@ -35,8 +35,8 @@ async function run() {
 		yarn: await which("yarn", true),
 	};
 
-	const token = core.getInput('token');
-	let pluginDir = core.getInput('pluginDir');
+	const token = core.getInput('PLUGIN_MACHINE_TOKEN');
+	let pluginDir = core.getInput('PLUGIN_DIR');
 	if( ! pluginDir ){
 		pluginDir = process.env.GITHUB_WORKSPACE;
 	}
@@ -44,6 +44,7 @@ async function run() {
 	const pluginDirArg = `--pluginDir=${pluginDir}`;
 	const tokenArg = `--token=${token}`;
 	const buildDirArg = `--buildDir=${buildDir}`;
+	//Command runner for Plugin Machine CLI commands
 	const pluginMachine = async (args) => {
 		return await runCommand({
 			path:paths.npx,
@@ -67,9 +68,7 @@ async function run() {
 				}
 
 			},
-			stderr: (data) => {
-
-			}
+			stderr: () => {}
 		};
 		await runCommand({
 			path:paths.npx,
@@ -91,16 +90,16 @@ async function run() {
 	core.notice(linkText);
 
 	//Put a comment on PR request if enabled
-	if( core.getInput('commentPr',false)){
-		const token = core.getInput('GITHUB_TOKEN');
-		const context = github.context;
-		const {payload} = context;
+	if( core.getInput('COMMENT_PR',false)){
+		const ghToken = core.getInput('GITHUB_TOKEN');
 		if ( typeof token !== 'string' ) {
 			throw new Error('Invalid GITHUB_TOKEN: did you forget to set it in your action config?');
 		}
+		const context = github.context;
+		const {payload} = context;
 		//And is a PR
 		if( payload.hasOwnProperty('pull_request') ){
-			const octokit = github.getOctokit(token);
+			const octokit = github.getOctokit(ghToken);
 
 			await octokit.rest.issues.createComment({
 				issue_number:payload.pull_request.number,

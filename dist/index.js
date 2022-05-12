@@ -9751,60 +9751,16 @@ module.exports = JSON.parse('[[[0,44],"disallowed_STD3_valid"],[[45,46],"valid"]
 /******/ 	}
 /******/ 	
 /************************************************************************/
-/******/ 	/* webpack/runtime/compat get default export */
-/******/ 	(() => {
-/******/ 		// getDefaultExport function for compatibility with non-harmony modules
-/******/ 		__nccwpck_require__.n = (module) => {
-/******/ 			var getter = module && module.__esModule ?
-/******/ 				() => (module['default']) :
-/******/ 				() => (module);
-/******/ 			__nccwpck_require__.d(getter, { a: getter });
-/******/ 			return getter;
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/define property getters */
-/******/ 	(() => {
-/******/ 		// define getter functions for harmony exports
-/******/ 		__nccwpck_require__.d = (exports, definition) => {
-/******/ 			for(var key in definition) {
-/******/ 				if(__nccwpck_require__.o(definition, key) && !__nccwpck_require__.o(exports, key)) {
-/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
-/******/ 				}
-/******/ 			}
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
-/******/ 	(() => {
-/******/ 		__nccwpck_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/make namespace object */
-/******/ 	(() => {
-/******/ 		// define __esModule on exports
-/******/ 		__nccwpck_require__.r = (exports) => {
-/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 			}
-/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 		};
-/******/ 	})();
-/******/ 	
 /******/ 	/* webpack/runtime/compat */
 /******/ 	
 /******/ 	if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = __dirname + "/";
 /******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be in strict mode.
+// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
-"use strict";
-__nccwpck_require__.r(__webpack_exports__);
-/* harmony import */ var _actions_io__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(7436);
-/* harmony import */ var _actions_io__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(_actions_io__WEBPACK_IMPORTED_MODULE_0__);
 const core = __nccwpck_require__(2186);
-
+const {which} =  __nccwpck_require__(7436);
 const exec = __nccwpck_require__(1514);
 const github = __nccwpck_require__(5438);
 
@@ -9822,7 +9778,7 @@ const runCommand = async ({path, args = [],options = {}}) => {
 			}
 		};
 	}
-	return new Promise(async(resolve, reject) => {
+	return new Promise(async(resolve,) => {
 		await exec.exec(path, args, options);
 		if(error && ! error.startsWith('npm WARN')){
 			//reject(error);
@@ -9835,13 +9791,13 @@ const runCommand = async ({path, args = [],options = {}}) => {
 
 async function run() {
 	const paths = {
-		npm: await (0,_actions_io__WEBPACK_IMPORTED_MODULE_0__.which)("npm", true),
-		npx: await (0,_actions_io__WEBPACK_IMPORTED_MODULE_0__.which)("npx", true),
-		yarn: await (0,_actions_io__WEBPACK_IMPORTED_MODULE_0__.which)("yarn", true),
+		npm: await which("npm", true),
+		npx: await which("npx", true),
+		yarn: await which("yarn", true),
 	};
 
-	const token = core.getInput('token');
-	let pluginDir = core.getInput('pluginDir');
+	const token = core.getInput('PLUGIN_MACHINE_TOKEN');
+	let pluginDir = core.getInput('PLUGIN_DIR');
 	if( ! pluginDir ){
 		pluginDir = process.env.GITHUB_WORKSPACE;
 	}
@@ -9849,6 +9805,7 @@ async function run() {
 	const pluginDirArg = `--pluginDir=${pluginDir}`;
 	const tokenArg = `--token=${token}`;
 	const buildDirArg = `--buildDir=${buildDir}`;
+	//Command runner for Plugin Machine CLI commands
 	const pluginMachine = async (args) => {
 		return await runCommand({
 			path:paths.npx,
@@ -9872,9 +9829,7 @@ async function run() {
 				}
 
 			},
-			stderr: (data) => {
-
-			}
+			stderr: () => {}
 		};
 		await runCommand({
 			path:paths.npx,
@@ -9896,16 +9851,16 @@ async function run() {
 	core.notice(linkText);
 
 	//Put a comment on PR request if enabled
-	if( core.getInput('commentPr',false)){
-		const token = core.getInput('GITHUB_TOKEN');
-		const context = github.context;
-		const {payload} = context;
+	if( core.getInput('COMMENT_PR',false)){
+		const ghToken = core.getInput('GITHUB_TOKEN');
 		if ( typeof token !== 'string' ) {
 			throw new Error('Invalid GITHUB_TOKEN: did you forget to set it in your action config?');
 		}
+		const context = github.context;
+		const {payload} = context;
 		//And is a PR
 		if( payload.hasOwnProperty('pull_request') ){
-			const octokit = github.getOctokit(token);
+			const octokit = github.getOctokit(ghToken);
 
 			await octokit.rest.issues.createComment({
 				issue_number:payload.pull_request.number,
