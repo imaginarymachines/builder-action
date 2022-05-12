@@ -1,14 +1,75 @@
 # Plugin Machine Builder Action
 
-<p align="center">
-  <a href="https://github.com/actions/javascript-action/actions"><img alt="javscript-action status" src="https://github.com/actions/javascript-action/workflows/units-test/badge.svg"></a>
-</p>
+This is a [Github action](https://docs.github.com/en/actions) for WordPress plugins. This action will install the plugin's dependencies with npm and/ or composer if needed. It will then create a ZIP file of the neccasary files, while skipping development files such as tests or configuration files not needed in production. Optionally, it will add a comment to the PR, with a link to download the zip.
 
-Use this template to bootstrap the creation of a JavaScript action.:rocket:
+This action requires an active [PluginMachine](https://pluginmachine.com?utm_source=gh_builder_action) account. Sign up for a [14 Day Free Trial](https://pluginmachine.com/register?utm_source=gh_builder_action).
 
-This template includes tests, linting, a validation workflow, publishing, and versioning guidance.
+## Usage
 
-If you are new, there's also a simpler introduction.  See the [Hello World JavaScript Action](https://github.com/actions/hello-world-javascript-action)
+> [Example Plugin](https://github.com/imaginarymachines/actions-test)
+
+### Before Adding Workflow
+
+First, you will need to copy your Plugin Machine token from the [API tokens page](https://pluginmachine.app/dashboard/api). Then [create an encrypted secret](https://docs.github.com/en/actions/security-guides/encrypted-secrets#creating-encrypted-secrets-for-a-repository) in your Github repo called "PLUGIN_MACHINE_TOKEN", using the value you copied from the app.
+
+### Workflow File
+
+#### Build, Zip and Upload WordPress Plugin For Pull Requests
+
+```yaml
+
+name: Build and ZIP
+on:
+  pull_request:
+    types: [opened, synchronize]
+jobs:
+  make_zip:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        #Use Node 16
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      # Build, Zip and Upload Plugin
+      - name: Zip Plugin
+        id: pluginmachine
+        uses: imaginary-machines/builder-action@main
+        with:
+          PLUGIN_MACHINE_TOKEN:  ${{ secrets.PLUGIN_MACHINE_TOKEN }}
+          PLUGIN_DIR: ${{ github.workspace }}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+```
+
+#### Build, Zip and Upload WordPress Plugin And Comment On Pull Requests
+
+```yaml
+
+name: Build and ZIP
+on:
+  pull_request:
+    types: [opened, synchronize]
+jobs:
+  make_zip:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        #Use Node 16
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      # Build, Zip and Upload Plugin
+      - name: Zip Plugin
+        id: pluginmachine
+        uses: imaginary-machines/builder-action@main
+        with:
+          PLUGIN_MACHINE_TOKEN:  ${{ secrets.PLUGIN_MACHINE_TOKEN }}
+          PLUGIN_DIR: ${{ github.workspace }}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          COMMENT_PR: true
+```
+
+
 
 ## Development
 
@@ -62,16 +123,3 @@ Note: We recommend using the `--license` option for ncc, which will create a lic
 Your action is now published! :rocket:
 
 See the [versioning documentation](https://github.com/actions/toolkit/blob/master/docs/action-versioning.md)
-
-## Usage
-
-You can now consume the action by referencing the v1 branch
-
-```yaml
-uses: imaginary-machines/builder-action@v1
-with:
-  token: ${{ secrets.PLUGIN_MACHINE_TOKEN }}
-  path: ${{ github.workspace }}
-```
-
-See the [actions tab](https://github.com/imaginarymachines/builder-action/actions) for runs of this action! :rocket:

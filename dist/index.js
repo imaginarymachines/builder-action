@@ -9861,7 +9861,6 @@ async function run() {
 		//And is a PR
 		if( payload.hasOwnProperty('pull_request') ){
 			const octokit = github.getOctokit(ghToken);
-
 			await octokit.rest.issues.createComment({
 				issue_number:payload.pull_request.number,
 				owner: context.repo.owner,
