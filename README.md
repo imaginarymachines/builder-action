@@ -2,7 +2,7 @@
 
 This is a [Github action](https://docs.github.com/en/actions) for WordPress plugins. This action will install the plugin's dependencies with npm and/ or composer if needed. It will then create a ZIP file of the neccasary files, while skipping development files such as tests or configuration files not needed in production. Optionally, it will add a comment to the PR, with a link to download the zip.
 
-This action requires an active [PluginMachine](https://pluginmachine.com?utm_source=gh_builder_action) account. Sign up for a [14 Day Free Trial](https://pluginmachine.com/register?utm_source=gh_builder_action).
+This action requires an active [Plugin Machine](https://pluginmachine.com?utm_source=gh_builder_action) account. Sign up for a [14 Day Free Trial](https://pluginmachine.com/register?utm_source=gh_builder_action).
 
 ## Usage
 
